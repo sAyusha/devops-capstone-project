@@ -1,43 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
+  name: accounts
   labels:
     app: accounts
-  name: accounts
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: accounts
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: accounts
     spec:
       containers:
-      - image: us.icr.io/sn-labs-ayushashrest/accounts:1
-        name: accounts
-        resources: {}
-
+      - name: accounts
+        image: $(IMAGE_NAME)  
+        ports:
+        - containerPort: 8080  
         env:
-          - name: DATABASE_HOST
-            value: postgresql
-          - name: DATABASE_NAME
-            valueFrom:
-              secretKeyRef:
-                name: postgresql
-                key: database-name
-          - name: DATABASE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgresql
-                key: database-password
-          - name: DATABASE_USER
-            valueFrom:
-              secretKeyRef:
-                name: postgresql
-                key: database-user
-status: {}
+        - name: DATABASE_HOST
+          value: postgresql
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: database-name
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: database-password
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: database-user
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
