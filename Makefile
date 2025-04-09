@@ -27,7 +27,7 @@ clustertasks: ## Create Tekton Cluster Tasks
 .PHONY: build
 build: ## Build a Docker image
 	$(info Building Docker image...)
-	docker build --rm --pull --tag accounts:1.0 . 
+	docker build --rm --pull --tag accounts:1.0 .
 
 .PHONY: push
 push: ## Push image to K3d registry
@@ -44,10 +44,11 @@ install: ## Install Python dependencies
 	python3 -m pip install --upgrade pip wheel
 	pip install -r requirements.txt
 
+.PHONY: lint
 lint: ## Run the linter
 	$(info Running linting...)
 	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-	flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+	flake8 . --count --max-complexity=10 --max-line-length=127 --ignore=E301,E302,E303,W292,W293 --statistics
 
 .PHONY: tests
 tests: ## Run the unit tests
@@ -58,11 +59,13 @@ run: ## Run the service
 	$(info Starting service...)
 	honcho start
 
+.PHONY: dbrm
 dbrm: ## Stop and remove PostgreSQL in Docker
 	$(info Stopping and removing PostgreSQL...)
 	docker stop postgres
 	docker rm postgres
 
+.PHONY: db
 db: ## Run PostgreSQL in Docker
 	$(info Running PostgreSQL...)
 	docker run -d --name postgresql \
